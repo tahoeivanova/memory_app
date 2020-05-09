@@ -1,7 +1,7 @@
 # memory_app
 practice of mnemotechnics
 
-Блок-схемы:
+Блок-схемы:\n
 "DIGITS"
 https://app.lucidchart.com/invitations/accept/4862e7ee-77dd-4e23-ba0d-6c6d07b4f851
 
