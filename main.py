@@ -2,6 +2,7 @@ from bottle import Bottle, route, static_file, template, run, request, redirect
 from sqlAlchemy_classes import User, NumberResults, CardsResults, Card, session, cards_filter
 import random
 import itertools
+from mnemo_functions import pi_reader
 
 application = Bottle()
 
@@ -15,6 +16,11 @@ random_numbers_global = [] # a list for computer's numbers
 # globals for Card Memory
 cards_init_global = [] # an ordered list for select input form
 cards_shuffled_global = [] # shuffled cards
+
+# globals for Pi
+pi = ''
+pi_length = 0
+pi_field_length = 0
 
 
 # Index page
@@ -116,6 +122,7 @@ def digits_answer_input():
 
 @application.post('/number_results')
 def number_results():
+    url = '/number_memory' # training one more time
     # get the list of user's answers
     # global input_numbers_global
     user_input_list = []
@@ -168,10 +175,10 @@ def number_results():
             session.add(results)
             session.commit()
             loose_results = results.loose_amount
-        return template('number_results', zipped_list=result_lists, results_status=results_status, win_results=win_results, loose_results=loose_results)
+        return template('results', zipped_list=result_lists, results_status=results_status, win_results=win_results, loose_results=loose_results, url=url)
     # not registered user
 
-    return template('number_results', zipped_list=result_lists, results_status='You\'re not logged in', win_results='You\'re not logged in', loose_results='You\'re not logged in')
+    return template('results', zipped_list=result_lists, results_status='You\'re not logged in', win_results='You\'re not logged in', loose_results='You\'re not logged in', url=url)
 
 
 # II - Cards Memory
@@ -207,6 +214,7 @@ def show_cards_post():
 
 @application.post('/cards_results')
 def cards_input():
+    url = '/cards_memory'
     user_input_list = []
     global cards_shuffled_global
     for i in range(1, len(cards_shuffled_global)+1):
@@ -259,14 +267,68 @@ def cards_input():
             session.commit()
             loose_results = results.loose_amount
         return template('cards_results', zipped_list=result_lists, results_status=results_status,
-                        win_results=win_results, loose_results=loose_results)
+                        win_results=win_results, loose_results=loose_results, url=url)
     # not registered user
 
     return template('cards_results', zipped_list=result_lists, results_status='You\'re not logged in',
-                    win_results='You\'re not logged in', loose_results='You\'re not logged in')
+                    win_results='You\'re not logged in', loose_results='You\'re not logged in', url=url)
 
 
+# III - Pi
+# get pi number
+@application.route('/pi/<n:int>')
+def pi(n):
+    pi = pi_reader(n)
+    return f'<h1>3.{pi}</h1>'
 
+# Pi Index
+@application.route('/pi')
+def pi_page():
+    return template('pi_main')
+
+# Options
+@application.post('/pi')
+def pi_page():
+    global pi_length
+    global pi_field_length
+    pi_length = request.forms.get('pi_length', type=int) # digits after comma
+    pi_field_length = request.forms.get('pi_field_length', type=int) # amount of digits in one field
+
+    return template('pi_input', pi_length=pi_length, pi_field_length=pi_field_length)
+
+@application.post('/pi_input')
+def results_pi():
+    url = '/pi'
+    global pi_length
+    global pi_field_length
+    if pi_length%pi_field_length==0:
+        count = pi_length//pi_field_length
+    else:
+        count = pi_length // pi_field_length + 1
+    input_pi = ''
+    for i in range(1, count+1):
+        i = str(i)
+        pi_answer = request.forms.get('pi_answer'+i)  # сколько цифр после запятой
+        input_pi+=pi_answer
+    print(input_pi)
+
+    # Define Pi global
+    global pi
+
+    pi = pi_reader(pi_length)
+    # pi = pi[2:] # pi without '3.'
+
+
+    input_pi = list(input_pi)
+    pi = list(pi)
+    result_lists = itertools.zip_longest(input_pi,pi)
+    results_status = ''
+    # СРАВНИВАЕМ С ВВЕДЕННЫМ РЕЗУЛЬТАТОМ
+    if input_pi == pi:
+        results_status = "WIN"
+    else:
+        results_status = "LOOSE"
+    return template('results', zipped_list=result_lists, results_status=results_status, win_results='You\'re not logged in', loose_results='You\'re not logged in', url=url)
 
 
 # static files
