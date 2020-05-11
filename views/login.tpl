@@ -45,6 +45,9 @@
     <link href="static/css/signin.css" rel="stylesheet">
   </head>
   <body class="text-center">
+  <header>
+      % include('navbar.tpl')
+  </header>
     <form class="form-signin" action="/login" method="post">
   <img class="mb-4" src="/docs/4.4/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
   <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
