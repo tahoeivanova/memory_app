@@ -1,5 +1,5 @@
 from bottle import Bottle, route, static_file, template, run, request, redirect
-from auth import User, NumberResults, session
+from sqlAlchemy_classes import User, NumberResults, CardsResults, Card, session, cards_filter
 import random
 import itertools
 
@@ -10,7 +10,12 @@ user_global = ''
 
 # globals for Number Memory
 random_numbers_global = [] # a list for computer's numbers
-input_numbers_global = [] # a list for user's numbers
+# input_numbers_global = [] # a list for user's numbers
+
+# globals for Card Memory
+cards_init_global = [] # an ordered list for select input form
+cards_shuffled_global = [] # shuffled cards
+
 
 # Index page
 @application.route('/')
@@ -68,15 +73,15 @@ def logout():
     user_global = ''
     return redirect('/')
 
-# Number Memory
+# I - Number Memory
 # 1 - Set Options
 @application.route('/number_memory')
 def set_options():
     # clear global variables
     global random_numbers_global
-    global input_numbers_global
+    # global input_numbers_global
     random_numbers_global.clear()
-    input_numbers_global.clear()
+    # input_numbers_global.clear()
     return template('number_options')
 
 # 2 - Number Training
@@ -112,18 +117,19 @@ def digits_answer_input():
 @application.post('/number_results')
 def number_results():
     # get the list of user's answers
-    global input_numbers_global
+    # global input_numbers_global
+    user_input_list = []
     for i in range(len(random_numbers_global)): # amount of numbers
         i +=1 # counter (fields starting count from 1)
         i = str(i) #  counter to string
         # the same counter is in a template, so we can define user's answer
         user_input = request.forms.get('number'+ i, type=int) # get the user's input ('i' is a number of field)
-        input_numbers_global.append(user_input) # add user's inputs in a global list
+        user_input_list.append(user_input) # add user's inputs in a global list
 
     # status Win or Loose
     results_status = ''
     # make the zip lists of results for template
-    result_lists = itertools.zip_longest(input_numbers_global, random_numbers_global)
+    result_lists = itertools.zip_longest(user_input_list, random_numbers_global)
 
     # find a User in SQL
     global user_global
@@ -138,7 +144,7 @@ def number_results():
 
         # TRUE
         # add +1 to the win_amount in SQL
-        if input_numbers_global == random_numbers_global:
+        if user_input_list == random_numbers_global:
             results_status = 'WIN'
             # if it is a first time, create a table, else - find win_amount and add 1
             win_amount_new = 1 if (results_table == None) else results_table.win_amount + 1
@@ -165,7 +171,99 @@ def number_results():
         return template('number_results', zipped_list=result_lists, results_status=results_status, win_results=win_results, loose_results=loose_results)
     # not registered user
 
-    return template('number_results', zipped_list=result_lists, results_status=results_status, win_results='You\'re not logged in', loose_results='You\'re not logged in')
+    return template('number_results', zipped_list=result_lists, results_status='You\'re not logged in', win_results='You\'re not logged in', loose_results='You\'re not logged in')
+
+
+# II - Cards Memory
+# 1 - Set Options
+@application.route('/cards_memory')
+def cards_options():
+    return template('cards_set_options')
+
+@application.post('/cards_memory')
+def show_cards():
+    cards_all = request.forms.get('cards_all', type=int)
+    cards_time = request.forms.get('cards_time', type=int)
+
+    cards_time *= 1000
+
+    # filter cards from SQL (36, 52, 53)
+    cards = cards_filter(cards_all)
+    # cards_initial - ordered list for answers
+    cards_initial = cards.copy()
+    global cards_init_global
+    cards_init_global = cards_initial
+    random.shuffle(cards)
+
+    global cards_shuffled_global
+    cards_shuffled_global = cards
+    return template('cards_training', cards_shuffled=cards_shuffled_global, cards_time=cards_time)
+
+@application.post('/cards_input')
+def show_cards_post():
+    global cards_init_global
+
+    return template('cards_input', card_list=cards_init_global)
+
+@application.post('/cards_results')
+def cards_input():
+    user_input_list = []
+    global cards_shuffled_global
+    for i in range(1, len(cards_shuffled_global)+1):
+        i = str(i)
+        user_answer_cards = request.forms.getunicode('card'+ i)
+        user_answer_cards=str(user_answer_cards)
+        user_input_list.append(user_answer_cards)
+
+    # status Win or Loose
+    results_status = ''
+    # make the zip lists of results for template
+    result_lists = itertools.zip_longest(user_input_list, cards_shuffled_global)
+
+
+    # find a User in SQL
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    # registered user
+    if user:
+        # find User's Results Table
+        # find user's table of results (last result)
+        results_table = session.query(CardsResults).filter_by(user_id=user.id).order_by(
+            CardsResults.attempt_id.desc()).first()
+
+        # Comparing two lists (computer list and user list)
+
+        # TRUE
+        # add +1 to the win_amount in SQL
+        if user_input_list == cards_shuffled_global:
+            results_status = 'WIN'
+            # if it is a first time, create a table, else - find win_amount and add 1
+            win_amount_new = 1 if (results_table == None) else results_table.win_amount + 1
+            loose_results = 0 if (results_table == None) else results_table.loose_amount
+
+            results = CardsResults(user_id=user.id, win_amount=win_amount_new, loose_amount=loose_results)
+            session.add(results)
+            session.commit()
+            win_results = results.win_amount
+
+        # FALSE
+        # add +1 to the loose_amount in SQL
+        else:
+            results_status = 'LOOSE'
+            # if it is a first time, create a table, else - find loose_amount and add 1
+            loose_amount_new = 1 if (results_table == None) else results_table.loose_amount + 1
+            win_results = 0 if (results_table == None) else results_table.win_amount
+
+            results = CardsResults(user_id=user.id, win_amount=win_results, loose_amount=loose_amount_new)
+            session.add(results)
+            session.commit()
+            loose_results = results.loose_amount
+        return template('cards_results', zipped_list=result_lists, results_status=results_status,
+                        win_results=win_results, loose_results=loose_results)
+    # not registered user
+
+    return template('cards_results', zipped_list=result_lists, results_status='You\'re not logged in',
+                    win_results='You\'re not logged in', loose_results='You\'re not logged in')
 
 
 
@@ -181,4 +279,8 @@ def server_static(filename):
 
 if __name__ == '__main__':
     application.run(debug=True, reloader=True)
+# if __name__ == '__main__':
+#     application.run(host='0.0.0.0')
+
+
 
