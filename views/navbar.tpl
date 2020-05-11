@@ -24,6 +24,9 @@
           <a class="nav-link" href="/number_memory">Number Memory</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="/cards_memory">Cards Memory</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
       </ul>
