@@ -20,15 +20,15 @@ class User(Base):
 
 # класс digit_results
 
-class DigitResults(Base):
-    __tablename__ = 'number_memory_results'
-    id = Column(Integer, primary_key=True)
+class NumberResults(Base):
+    __tablename__ = 'number_results'
+    attempt_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey(User.id))
     win_amount = Column(Integer, default=0)
     loose_amount = Column(Integer, default=0)
 
     def __repr__(self):
-        return f'<DigitResults.{self.user_id}, attempt: {self.id}, wins: {self.win_amount}>'
+        return f'<DigitResults.{self.user_id}, attempt: {self.attempt_id}, wins: {self.win_amount}>'
 
 
 metadata = MetaData()
