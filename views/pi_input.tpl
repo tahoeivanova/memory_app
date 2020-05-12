@@ -16,7 +16,7 @@
 
 
 
-<form action="/pi_input" method="POST">
+<form action="/pi_results" method="POST">
 <div>
 % count = 0
 % for i in range(0, pi_length, pi_field_length):

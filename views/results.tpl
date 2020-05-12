@@ -49,7 +49,7 @@
 <p>Всего поражений: {{loose_results}}</p>
 
 
-<a style='margin-bottom: 20px;font-sixe:36px;' href="/{{url}}">Ещё раз?</a>
+<a style='margin-bottom: 20px;font-sixe:36px;' href="{{url}}">Ещё раз?</a>
 
 
 
