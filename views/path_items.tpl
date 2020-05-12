@@ -16,7 +16,7 @@
 		<div style="text-align:center">
 			<ul  style = "list-style-type:none">
 		% for item in path:
-			<li style="font-size: 24px;">{{item.key}}</li>
+			<li style="font-size: 24px;">{{item.name}}<a href="/path_item_delete/{{path_id}}/{{item.id}}">Удалить</a> || <a href="/path_item_edit/{{path_id}}/{{item.id}}">Изменить</a></li>
 
 		% end
 			</ul>
@@ -26,7 +26,7 @@
 		<div>
 		<p>Добавить образ в цепочку опорных образов:</p>
 
-		<form action="/path" method="POST">
+		<form action="/path/{{path_id}}" method="POST">
 			<input type="text" size="50" maxlength="100" name="item">
 		    <input type="submit" value="Сохранить название">
 		</form>

@@ -10,8 +10,8 @@
 
 
 
-<form action="/path_name_edit/{{old_path_name.id}}" method="GET">
-	<input type="text" name="path_name" value="{{old_path_name}}">
+<form action="/path_item_edit/{{path_id}}/{{item_id}}" method="GET">
+	<input type="text" name="item_name" value="{{old_item_name}}">
     <input type="submit" name="edit" value="Изменить">
 </form>
 </div>

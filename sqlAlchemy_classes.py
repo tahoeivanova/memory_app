@@ -58,7 +58,7 @@ class PathName(Base):
     __tablename__ = 'path_names'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey(User.id))
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -70,6 +70,9 @@ class PathItems(Base):
     path_id = Column(Integer, ForeignKey(PathName.id))
     name = Column(String, nullable=False)
     value = Column(String)
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 

@@ -23,6 +23,9 @@ pi = ''
 pi_length = 0
 pi_field_length = 0
 
+# globals for paths
+global path_global
+
 
 # Index page
 @application.route('/')
@@ -86,9 +89,7 @@ def logout():
 def set_options():
     # clear global variables
     global random_numbers_global
-    # global input_numbers_global
     random_numbers_global.clear()
-    # input_numbers_global.clear()
     return template('number_options')
 
 # 2 - Number Training
@@ -332,9 +333,8 @@ def results_pi():
     return template('results', zipped_list=result_lists, results_status=results_status, win_results='You\'re not logged in', loose_results='You\'re not logged in', url=url)
 
 
-# IV - Path
+# IV - 1 - Path
 # list of paths
-# add new path_name
 @application.route('/path')
 def path_names():
     global user_global
@@ -343,6 +343,7 @@ def path_names():
     # path_names = path_names_all.path_name
     return template('path_names', path_names=path_names_all)
 
+# add new path_name
 @application.post('/path')
 def add_path_name():
     global user_global
@@ -351,9 +352,6 @@ def add_path_name():
     path_name_new = PathName(user_id=user.id, name=path_name)
     session.add(path_name_new)
     session.commit()
-    # path_id = session.query(PathName).filter_by(user_id=user.id, name=path_name).first()
-    # item_names_all = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).all()
-
     return redirect('/path')
 
 # delete path_name
@@ -368,71 +366,118 @@ def delete_path_name(path_id):
         return redirect('/path')
     return template('path_delete', path=path)
 
-# # edit path_name
-# @application.route('/path_name_edit/<path_id:int>')
-# def edit_path_name(path_id):
-#     global user_global
-#     user = session.query(User).filter_by(nickname=user_global).first()
-#     path = session.query(PathName).filter_by(user_id=user.id, id=path_id).first()
-#
-#     if request.GET.edit:
-#         session.delete(path)
-#         return redirect('/path')
-#     return template('path_edit', path=path)
-#
-#
-
-    #
-    #
-    # path_name = request.forms.getunicode('path_name')
-    # path_id = session.query(PathName).filter_by(user_id=user.id, name=path_name)
-    # item_names_all = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).all()
-    #
-    # # удалить таблицу (цепочку)
-    # @app.route('/delete_path/<path_table>')
-    # def delete_path(path_table):
-    #     if request.GET.delete:
-    #         conn = sqlite3.connect('memory_app.db')
-    #         c = conn.cursor()
-    #         c.execute("DROP TABLE %s" % path_table)
-    #         conn.commit()
-    #         c.close()
-    #         return template('delete_table', path=path_table)
-    #     else:
-    #         return template('delete_table', path=path_table)
-    #
-    #
-    #
+# edit path_name
+@application.route('/path_name_edit/<path_id:int>', method="GET")
+def edit_path_name(path_id):
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    old_path_name = session.query(PathName).filter_by(user_id=user.id, id=path_id).first()
+    if request.GET.edit:
+        path_name_edited = request.GET.path_name.strip()
+        old_path_name.name = path_name_edited
+        return redirect('/path')
+    else:
+        return template('path_name_edit', old_path_name=old_path_name)
 
 
-
+# IV - 2 - Path Items
 
 # add, edit, delete path_items
+# list of path items
 @application.route('/path/<path_id>')
 def path_item(path_id):
     global user_global
     user = session.query(User).filter_by(nickname=user_global).first()
-    path = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).all()
-    if path:
-        return template('path_items', path=path, path_id=path_id)
+    path_items = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).all()
+    if path_items:
+        return template('path_items', path=path_items, path_id=path_id)
     else:
         return template('path_no_items', path_id=path_id)
 
-
+# add path item
 @application.post('/path/<path_id>')
-def add_path(path_id):
+def add_path_item(path_id):
     item = request.forms.getunicode('item')
     global user_global
     user = session.query(User).filter_by(nickname=user_global).first()
-    path = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).first()
-    new_item = PathItems(user_id=user.id, path_id=path_id, key=item)
+    # path = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).first()
+    new_item = PathItems(user_id=user.id, path_id=path_id, name=item)
     session.add(new_item)
     session.commit()
-    return template('path_items')
+    return redirect(f'/path/{path_id}')
+
+# delete path item
+@application.route('/path_item_delete/<path_id:int>/<item_id:int>')
+def delete_path_item(path_id, item_id):
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    path_item = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id, id=item_id).first()
+
+    if request.GET.delete:
+        session.delete(path_item)
+        return redirect(f'/path/{path_id}')
+    return template('path_item_delete', path_item=path_item, path_id=path_id, item_id=item_id)
+
+# edit path item
+@application.route('/path_item_edit/<path_id:int>/<item_id:int>', method="GET")
+def edit_path_item(path_id, item_id):
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    old_item_name = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id, id=item_id).first()
+    if request.GET.edit:
+        item_name_edited = request.GET.item_name.strip()
+        old_item_name.name = item_name_edited
+        return redirect(f'/path/{path_id}')
+    else:
+        return template('path_item_edit', old_item_name=old_item_name, path_id=path_id, item_id=item_id)
+
+# IV - 3 - Path Training
+@application.route('/path_training/<path_id:int>', method="GET")
+def path_training(path_id):
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    path_items = session.query(PathItems).filter_by(user_id=user.id, path_id=path_id).all()
+    path_item_list = []
+    for item in path_items:
+        item = str(item)
+        path_item_list.append(item)
+    global path_global
+    path_global = path_item_list
+
+    return template('path_training', numbers_all = len(path_global), random_numbers_global=path_global, number_time=5000)
+
+@application.post('/path_input')
+def path_input():
+    global path_global
+    return template('number_input', fields_amount=len(path_global))
+
+@application.post('/number_results')
+def path_results():
+    url = '/path'
+    user_input_list = []
+    global path_global
+    for i in range(1, len(path_global)+1):
+        i = str(i)
+        user_input = request.forms.getunicode('number' + i)  # get the user's input ('i' is a number of field)
+        user_input_list.append(user_input)  # add user's inputs in a global list
+
+    # status Win or Loose
+    results_status = ''
+    # make the zip lists of results for template
+    result_lists = itertools.zip_longest(user_input_list, path_global)
 
 
+    # registered user
 
+    if user_input_list == path_global:
+        results_status = 'WIN'
 
+    # FALSE
+    # add +1 to the loose_amount in SQL
+    else:
+        results_status = 'LOOSE'
+
+    return template('results', zipped_list=result_lists, results_status=results_status, win_results='no result', loose_results='no result', url=url)
 
 # static files
 @application.route('/static/<filename:path>')

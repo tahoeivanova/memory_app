@@ -13,11 +13,13 @@
 <br>
 
 
+
+
 		<div style="text-align:center">
 			<ul  style = "list-style-type:none">
 		% for name in path_names:
 			<li style="font-size: 24px;">{{name.name}}</li>
-			<a href="/memory_training_path/{{name.name}}">Тренировка</a> ||
+			<a href="/path_training/{{name.id}}">Тренировка</a> ||
 			<a href="/path/{{name.id}}">Смотреть таблицу</a> ||
 			<a href="/path_name_edit/{{name.id}}">Изменить название таблицы</a> ||
 			<a href="/path_delete/{{name.id}}">Удалить таблицу</a>
