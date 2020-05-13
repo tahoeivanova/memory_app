@@ -27,7 +27,7 @@
 		<p>Добавить образ в цепочку опорных образов:</p>
 
 		<form action="/path/{{path_id}}" method="POST">
-			<input type="text" size="50" maxlength="100" name="item">
+			<input type="text"  name="item">
 		    <input type="submit" value="Сохранить название">
 		</form>
 

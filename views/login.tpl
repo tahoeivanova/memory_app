@@ -50,17 +50,17 @@
   </header>
     <form class="form-signin" action="/login" method="post">
   <img class="mb-4" src="/docs/4.4/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-  <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+  <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
   <label for="inputNickname" class="sr-only">Nickname</label>
   <input type="text" name="nickname" id="inputNickname" class="form-control" placeholder="Nickname" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
   <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-  <div class="checkbox mb-3">
-    <label>
+<!--   <div class="checkbox mb-3"> -->
+<!--     <label>
       <input type="checkbox" value="remember-me"> Remember me
-    </label>
-  </div>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </label> -->
+<!--   </div> -->
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
   <p class="mt-5 mb-3 text-muted">&copy; 2017-2019</p>
 </form>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
