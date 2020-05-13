@@ -9,31 +9,31 @@
           <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/signup">Sign Up</a>
+          <a class="nav-link" href="/signup">Регистрация</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/login">Log In</a>
+          <a class="nav-link" href="/login">Войти</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/profile">Profile</a>
+          <a class="nav-link" href="/profile">Профиль</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/logout">Log Out</a>
+          <a class="nav-link" href="/number_memory">Числа</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/number_memory">Numbers</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/cards_memory">Cards</a>
+          <a class="nav-link" href="/cards_memory">Карты</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/pi">Pi</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/path">Paths</a>
+          <a class="nav-link" href="/path">Цепочки образов</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/theory">Theory</a>
+          <a class="nav-link" href="/theory">Теория</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Выйти</a>
         </li>
       </ul>
 
