@@ -4,6 +4,8 @@ import random
 import itertools
 from mnemo_functions import pi_reader
 from sqlalchemy import and_
+import hashlib
+import os
 
 application = Bottle()
 
@@ -43,7 +45,11 @@ def signup():
 def do_signup():
     nickname = request.forms.get('nickname')
     email = request.forms.get('email')
-    password = request.forms.get('password')
+    password = request.forms.getunicode('password')
+    salt = os.urandom(32)
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+    password = salt + key
 
     new_user = User(nickname=nickname, email=email, password=password)
     session.add(new_user)
@@ -59,13 +65,24 @@ def login():
 @application.post('/login')
 def do_login():
     nickname = request.forms.get('nickname')
-    password = request.forms.get('password')
+    password_to_check = request.forms.getunicode('password') # str - user's input password
+
     global user_global
     user_global = nickname
 
     user = session.query(User).filter_by(nickname=nickname).first()
     if user:
-        if user.password == password:
+        password_from_storage = user.password #  bytes in sql
+
+
+        salt = password_from_storage[:32]
+        key = password_from_storage[32:]
+
+        new_key = hashlib.pbkdf2_hmac('sha256', password_to_check.encode('utf-8'), salt, 100000)
+
+
+
+        if new_key == key:
             # return '<h1>You are logged in! </h1>'
             return redirect('/profile')
     return '<h1>Invalid user or password!</h1>'
@@ -532,11 +549,11 @@ def server_static(filename):
 
 
 
-
-if __name__ == '__main__':
-    application.run(debug=True, reloader=True)
+#
 # if __name__ == '__main__':
-#     application.run(host='0.0.0.0')
+#     application.run(debug=True, reloader=True)
+if __name__ == '__main__':
+    application.run(host='0.0.0.0')
 
 
 
