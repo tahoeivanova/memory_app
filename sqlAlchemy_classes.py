@@ -1,20 +1,21 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, ForeignKey, desc, and_
+from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, desc, and_
 
+# engine = create_engine('mysql+pymysql://u1042155_default:vjTc!DD9@localhost/u1042155_bottle_sql')
 engine = create_engine('postgresql+psycopg2://progerka@localhost:5432/mnemonistka')
-# engine = create_engine('mysql://u1042155_default:vjTc!DD9@localhost/u1042155_bottle_sql')
+
 
 Base = declarative_base()
 
 # User
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'users_hashes'
     id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True, nullable=False)
     nickname = Column(String(50), unique=True, nullable=False)
-    password = Column(String(80))
+    password = Column(LargeBinary)
 
     def __repr__(self):
         return f'<User.{self.nickname}>'
