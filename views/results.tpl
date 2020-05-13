@@ -39,7 +39,10 @@
 <p>Всего: {{count}}</p>
 <p>Неправильных ответов: {{wrong_answer}}</p>
 <p>Правильных ответов: {{right_answer}}</p>
+
+% if count != 0:
 % percent = round((right_answer/count*100), 2)
+  
 <p>Процент правильных ответов: {{percent}} %</p>
 
 

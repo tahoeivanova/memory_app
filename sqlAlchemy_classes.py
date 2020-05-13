@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, desc, and_
 
 # engine = create_engine('mysql+pymysql://u1042155_default:vjTc!DD9@localhost/u1042155_bottle_sql')
@@ -11,7 +11,7 @@ Base = declarative_base()
 
 # User
 class User(Base):
-    __tablename__ = 'users_hashes'
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True, nullable=False)
     nickname = Column(String(50), unique=True, nullable=False)
@@ -32,7 +32,7 @@ class NumberResults(Base):
         return f'<NumberResults.{self.user_id}, attempt: {self.attempt_id}, wins: {self.win_amount}>'
 
     def __str__(self):
-        return f'attempts: {self.attempt_id}, wins: {self.win_amount}>'
+        return f'attempts: {self.attempt_id}, wins: {self.win_amount}'
 
 # Cards
 class Card(Base):
@@ -79,6 +79,7 @@ class PathName(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey(User.id))
     name = Column(String, nullable=False, unique=True)
+    path_items = relationship("PathItems", cascade="all, delete-orphan")
 
     def __str__(self):
         return f'{self.name}'

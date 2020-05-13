@@ -3,7 +3,6 @@ from sqlAlchemy_classes import User, NumberResults, CardsResults, PiResults, Car
 import random
 import itertools
 from mnemo_functions import pi_reader
-from sqlalchemy import and_
 import hashlib
 import os
 
@@ -14,7 +13,6 @@ user_global = ''
 
 # globals for Number Memory
 random_numbers_global = [] # a list for computer's numbers
-# input_numbers_global = [] # a list for user's numbers
 
 # globals for Card Memory
 cards_init_global = [] # an ordered list for select input form
@@ -137,7 +135,7 @@ def set_options():
     # generate random numbers (1 - (0, 9), else - (10, 99))
     random_numbers_global = [random.randint(1, 9) for x in range(numbers_all)] if digits_in_number == 1 else [random.randint(10, 99) for x in range(numbers_all)]
     # return template with Number Memory Training
-    return template('number_training', numbers_all = numbers_all, random_numbers_global=random_numbers_global, number_time=number_time)
+    return template('number_training', numbers_all=numbers_all, random_numbers_global=random_numbers_global, number_time=number_time)
 
 # 3 - Number Input
 
@@ -396,8 +394,9 @@ def path_names():
     user = session.query(User).filter_by(nickname=user_global).first()
     if user:
         path_names_all = session.query(PathName).filter_by(user_id=user.id).all()
-        # path_names = path_names_all.path_name
+
         return template('path_names', path_names=path_names_all)
+
     else:
         return redirect('/login')
 # add new path_name
@@ -501,14 +500,14 @@ def path_training(path_id):
     global path_global
     path_global = path_item_list
 
-    return template('path_training', numbers_all = len(path_global), random_numbers_global=path_global, number_time=5000)
+    return template('path_training', path_all = len(path_global), path_global=path_global, path_time=5000)
 
 @application.post('/path_input')
 def path_input():
     global path_global
-    return template('number_input', fields_amount=len(path_global))
+    return template('path_input', fields_amount=len(path_global))
 
-@application.post('/number_results')
+@application.post('/path_results')
 def path_results():
     url = '/path'
     user_input_list = []
@@ -549,11 +548,11 @@ def server_static(filename):
 
 
 
-#
-# if __name__ == '__main__':
-#     application.run(debug=True, reloader=True)
+
 if __name__ == '__main__':
-    application.run(host='0.0.0.0')
+    application.run(port='8888',debug=True, reloader=True)
+# if __name__ == '__main__':
+#     application.run(host='0.0.0.0')
 
 
 

@@ -13,7 +13,7 @@
     <p class="lead">Add a new item to the Path:</p>
 
     <form action="/path/{{path_id}}" method="POST">
-    <input type="text" size="100" maxlength="100" name="item">
+    <input type="text" name="item">
     <input type="submit" value="save">
 
 </form>
