@@ -30,6 +30,9 @@ class NumberResults(Base):
     def __repr__(self):
         return f'<NumberResults.{self.user_id}, attempt: {self.attempt_id}, wins: {self.win_amount}>'
 
+    def __str__(self):
+        return f'attempts: {self.attempt_id}, wins: {self.win_amount}>'
+
 # Cards
 class Card(Base):
     __tablename__ = 'cards'
@@ -51,7 +54,8 @@ class CardsResults(Base):
 
     def __repr__(self):
         return f'<CardsResults.{self.user_id}, attempt: {self.attempt_id}, wins: {self.win_amount}>'
-
+    def __str__(self):
+        return f'attempts: {self.attempt_id}, wins: {self.win_amount}'
 
 # Pi Results
 class PiResults(Base):
@@ -61,10 +65,10 @@ class PiResults(Base):
     pi_signs_amount = Column(Integer, default=0)
 
     def __repr__(self):
-        return f'<PiResults.{self.user_id}, attempt: {self.attempt_id}, pi signs: {self.pi_signs_amount}>'
+        return f'<PiResults.{self.user_id}, attempt: {self.attempt_id}, pi signs: {self.pi_signs_amount}'
 
     def __str__(self):
-        return f'{self.pi_signs_amount}'
+        return f'You know {self.pi_signs_amount} signs after comma'
 
 
 

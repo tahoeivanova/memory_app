@@ -74,7 +74,17 @@ def do_login():
 @application.route('/profile')
 def profile():
     global user_global
-    return template('profile', user=user_global)
+    user = session.query(User).filter_by(nickname=user_global).first()
+    # registered user
+    if user:
+        results_number = session.query(NumberResults).filter_by(user_id=user.id).order_by(NumberResults.attempt_id.desc()).first()
+        results_cards = session.query(CardsResults).filter_by(user_id=user.id).order_by(CardsResults.attempt_id.desc()).first()
+        results_pi = session.query(PiResults).filter_by(user_id=user.id).order_by(PiResults.attempt_id.desc()).first()
+
+        return template('profile', user=user_global, results_number=results_number, results_cards=results_cards, results_pi=results_pi)
+    else:
+        return template('profile', user='you\'re not logged in', results_number='no results', results_cards='no results', results_pi='no results')
+
 
 # Log Out
 @application.route('/logout')
@@ -367,10 +377,12 @@ def results_pi():
 def path_names():
     global user_global
     user = session.query(User).filter_by(nickname=user_global).first()
-    path_names_all = session.query(PathName).filter_by(user_id=user.id).all()
-    # path_names = path_names_all.path_name
-    return template('path_names', path_names=path_names_all)
-
+    if user:
+        path_names_all = session.query(PathName).filter_by(user_id=user.id).all()
+        # path_names = path_names_all.path_name
+        return template('path_names', path_names=path_names_all)
+    else:
+        return redirect('/login')
 # add new path_name
 @application.post('/path')
 def add_path_name():
@@ -506,6 +518,12 @@ def path_results():
         results_status = 'LOOSE'
 
     return template('results', zipped_list=result_lists, results_status=results_status, win_results='no result', loose_results='no result', url=url)
+
+# V - Theory
+@application.route('/theory')
+def theory():
+    return template('articles')
+
 
 # static files
 @application.route('/static/<filename:path>')
