@@ -21,10 +21,16 @@
           <a class="nav-link" href="/logout">Log Out</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/number_memory">Number Memory</a>
+          <a class="nav-link" href="/number_memory">Numbers</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/cards_memory">Cards Memory</a>
+          <a class="nav-link" href="/cards_memory">Cards</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/pi">Pi</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/path">Paths</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
