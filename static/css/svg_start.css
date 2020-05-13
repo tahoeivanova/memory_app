@@ -1,0 +1,25 @@
+.svg_logo {
+position: absolute;
+width: 100%;
+text-align:center;
+margin: auto;
+top: 50%;
+margin-top: -240px;
+}
+
+.site-title {
+position: absolute;
+width: 100%;
+text-align:center;
+margin: auto;
+top: 50%;
+margin-top: -100px;
+}
+
+.site-title h1 {
+	font-size: 24px;
+}
+
+.index_a {
+	color:white;
+}
