@@ -1,5 +1,5 @@
 from bottle import Bottle, route, static_file, template, run, request, redirect
-from sqlAlchemy_classes import User, NumberResults, CardsResults, Card, PathName, PathItems, session, cards_filter
+from sqlAlchemy_classes import User, NumberResults, CardsResults, PiResults, Card, PathName, PathItems, session, cards_filter
 import random
 import itertools
 from mnemo_functions import pi_reader
@@ -325,13 +325,41 @@ def results_pi():
     pi = list(pi)
     result_lists = itertools.zip_longest(input_pi,pi)
     results_status = ''
-    # СРАВНИВАЕМ С ВВЕДЕННЫМ РЕЗУЛЬТАТОМ
+
+    # find a User in SQL
+    global user_global
+    user = session.query(User).filter_by(nickname=user_global).first()
+    # registered user
+    if user:
+        # find User's Results Table
+        # find user's table of results (last result)
+        results_table = session.query(PiResults).filter_by(user_id=user.id).order_by(
+            PiResults.attempt_id.desc()).first()
+
+        # Comparing two lists (computer list and user list)
+
+    # RESULTS
     if input_pi == pi:
         results_status = "WIN"
+
+        # if it is a first time, create a table, else - find win_amount and add 1
+        pi_signs_amount = len(pi)
+
+        results = PiResults(user_id=user.id, pi_signs_amount=pi_signs_amount)
+        session.add(results)
+        session.commit()
+        results = results.pi_signs_amount
+
     else:
         results_status = "LOOSE"
-    return template('results', zipped_list=result_lists, results_status=results_status, win_results='You\'re not logged in', loose_results='You\'re not logged in', url=url)
+        pi_signs_amount = 'Mistakes'
+    return template('results', zipped_list=result_lists, results_status=results_status, win_results=f'Вы знаете {pi_signs_amount} знаков Пи после запятой', loose_results='Not counted', url=url)
 
+
+
+
+
+#_______
 
 # IV - 1 - Path
 # list of paths
