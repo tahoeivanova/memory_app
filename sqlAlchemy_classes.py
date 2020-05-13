@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, desc, and_
 
-# engine = create_engine('mysql+pymysql://u1042155_default:vjTc!DD9@localhost/u1042155_bottle_sql')
 engine = create_engine('postgresql+psycopg2://progerka@localhost:5432/mnemonistka')
 
 
