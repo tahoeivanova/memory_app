@@ -58,8 +58,10 @@
 {{!base}}
 
 <footer class="footer mt-auto py-3">
-  <div class="container">
-    <span class="text-muted">Place sticky footer content here.</span>
+  <div class="container" style="text-align: center">
+    <span class="text-muted">Powered by Bottle.</span>
+        <span class="text-muted" >&#10026;AraxnoAnarxo</span>
+
   </div>
 </footer>
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
