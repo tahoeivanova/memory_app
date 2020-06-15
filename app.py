@@ -51,7 +51,15 @@ def do_signup():
 
     new_user = User(nickname=nickname, email=email, password=password)
     session.add(new_user)
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
     return redirect('/')
     # return f'<h1> Hello, {nickname}!<br> Your e-mail: {email}<br> Your password: {password} </h1> <br><p>Now you\'re in database!</p>'
 
@@ -105,6 +113,7 @@ def profile():
 @application.route('/logout')
 def logout():
     global user_global
+    session.close()
     user_global = ''
     return redirect('/')
 
@@ -352,16 +361,19 @@ def results_pi():
     results_status = ''
 
     # find a User in SQL
-    global user_global
-    user = session.query(User).filter_by(nickname=user_global).first()
+    # global user_global
+    try:
+        user = session.query(User).filter_by(nickname=user_global).first()
+    except:
+        user = ''
     # registered user
-    if user:
-        # find User's Results Table
-        # find user's table of results (last result)
-        results_table = session.query(PiResults).filter_by(user_id=user.id).order_by(
-            PiResults.attempt_id.desc()).first()
+    # if user:
+    # find User's Results Table
+    # find user's table of results (last result)
+    # results_table = session.query(PiResults).filter_by(user_id=user.id).order_by(
+    #     PiResults.attempt_id.desc()).first()
 
-        # Comparing two lists (computer list and user list)
+    # Comparing two lists (computer list and user list)
 
     # RESULTS
     if input_pi == pi:
@@ -369,19 +381,18 @@ def results_pi():
 
         # if it is a first time, create a table, else - find win_amount and add 1
         pi_signs_amount = len(pi)
-
-        results = PiResults(user_id=user.id, pi_signs_amount=pi_signs_amount)
-        session.add(results)
-        session.commit()
-        results = results.pi_signs_amount
+        if user:
+            results = PiResults(user_id=user.id, pi_signs_amount=pi_signs_amount)
+            session.add(results)
+            session.commit()
+            results = results.pi_signs_amount
 
     else:
         results_status = "LOOSE"
         pi_signs_amount = 'Mistakes'
-    return template('results', zipped_list=result_lists, results_status=results_status, win_results=f'Вы знаете {pi_signs_amount} знаков Пи после запятой', loose_results='Not counted', url=url)
-
-
-
+    return template('results', zipped_list=result_lists, results_status=results_status,
+                    win_results=f'Вы знаете {pi_signs_amount} знаков Пи после запятой', loose_results='Not counted',
+                    url=url)
 
 
 #_______

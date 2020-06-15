@@ -16,7 +16,8 @@
 		<div style="text-align:center">
 			<ul  style = "list-style-type:none">
 		% for item in path:
-			<li style="font-size: 24px;">{{item.name}}<a href="/path_item_delete/{{path_id}}/{{item.id}}">Удалить</a> || <a href="/path_item_edit/{{path_id}}/{{item.id}}">Изменить</a></li>
+			<li style="font-size: 24px;">{{item.name}}</li>
+			<a href="/path_item_delete/{{path_id}}/{{item.id}}"><sub>Удалить</sub></a> || <a href="/path_item_edit/{{path_id}}/{{item.id}}"><sub>Изменить</sub></a>
 
 		% end
 			</ul>

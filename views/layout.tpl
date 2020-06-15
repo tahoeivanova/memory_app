@@ -60,7 +60,7 @@
 <footer class="footer mt-auto py-3">
   <div class="container" style="text-align: center">
     <span class="text-muted">Powered by Bottle.</span>
-        <span class="text-muted" >&#10026;AraxnoAnarxo</span>
+        <span class="text-muted" >&#10026; Developed by <a href='https://github.com/tahoeivanova'>Tahoe Ivanova</a></span>
 
   </div>
 </footer>
