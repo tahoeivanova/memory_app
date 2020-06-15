@@ -2,9 +2,12 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, desc, and_
+from mnemo_functions import cards_data_for_sql
 
 # engine = create_engine('mysql+pymysql://u1042155_default:vjTc!DD9@localhost/u1042155_bottle_sql')
 engine = create_engine('postgresql+psycopg2://progerka@localhost:5432/mnemonistka')
+# engine = create_engine('postgresql://progerka@localhost:5432/mnemonistka')
+
 
 
 Base = declarative_base()
@@ -78,7 +81,7 @@ class PathName(Base):
     __tablename__ = 'path_names'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey(User.id))
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String(100), nullable=False, unique=True)
     path_items = relationship("PathItems", cascade="all, delete-orphan")
 
     def __str__(self):
